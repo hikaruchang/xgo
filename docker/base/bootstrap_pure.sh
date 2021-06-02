@@ -19,8 +19,8 @@ set -e
 if [ "$GOROOT" == "" ]; then
   $FETCH $ROOT_DIST $ROOT_DIST_SHA
 
-  tar -C /usr/local -xzf `basename $ROOT_DIST`
-  rm -f `basename $ROOT_DIST`
+  tar -C /usr/local -xzf $(basename $ROOT_DIST)
+  rm -f $(basename $ROOT_DIST)
 
   export GOROOT=/usr/local/go
 fi
@@ -67,5 +67,5 @@ fi
 
 # Install xgo within the container to enable internal cross compilation
 echo "Installing xgo-in-xgo..."
-go get -u src.hikaruchang.com/xgo
+go get -u github.com/hikaruchang/xgo
 ln -s /go/bin/xgo /usr/bin/xgo
