@@ -4,7 +4,7 @@
 // Released under the MIT license.
 
 // Wrapper around the GCO cross compiler docker container.
-package main // import "github.com/hikaruchang/xgo"
+package main // import "src.techknowlogick.com/xgo"
 
 import (
 	"bytes"
@@ -40,8 +40,8 @@ func init() {
 }
 
 // Cross compilation docker containers
-var dockerBase = "hikaruchang/xgo:base"
-var dockerDist = "hikaruchang/xgo:"
+var dockerBase = "techknowlogick/xgo:base"
+var dockerDist = "techknowlogick/xgo:"
 
 // Command line arguments to fine tune the compilation
 var (
@@ -255,19 +255,18 @@ func compile(image string, config *ConfigFlags, flags *BuildFlags, folder string
 	locals, mounts, paths := []string{}, []string{}, []string{}
 	var usesModules bool
 	if strings.HasPrefix(config.Repository, string(filepath.Separator)) || strings.HasPrefix(config.Repository, ".") {
-		// Resolve the repository import path from the file path
-		config.Repository = resolveImportPath(config.Repository)
-
-		// Determine if this is a module-based repository
-		var modFile = config.Repository + "/go.mod"
-		_, err := os.Stat(modFile)
-		usesModules = !os.IsNotExist(err)
+		if _, err := os.Stat(config.Repository + "/go.mod"); err == nil {
+			usesModules = true
+		}
 
 		// Iterate over all the local libs and export the mount points
 		if os.Getenv("GOPATH") == "" && !usesModules {
 			log.Fatalf("No $GOPATH is set or forwarded to xgo")
 		}
 		if !usesModules {
+			// Resolve the repository import path from the file path
+			config.Repository = resolveImportPath(config.Repository)
+
 			for _, gopath := range strings.Split(os.Getenv("GOPATH"), string(os.PathListSeparator)) {
 				// Since docker sandboxes volumes, resolve any symlinks manually
 				sources := filepath.Join(gopath, "src")
@@ -350,13 +349,13 @@ func compile(image string, config *ConfigFlags, flags *BuildFlags, folder string
 
 		fmt.Printf("Enabled Go module support\n")
 
-		// // Check whether it has a vendor folder, and if so, use it
-		// vendorPath := absRepository + "/vendor"
-		// vendorfolder, err := os.Stat(vendorPath)
-		// if !os.IsNotExist(err) && vendorfolder.Mode().IsDir() {
-		// 	args = append(args, []string{"-e", "FLAG_MOD=vendor"}...)
-		// 	fmt.Printf("Using vendored Go module dependencies\n")
-		// }
+		// Check whether it has a vendor folder, and if so, use it
+		vendorPath := absRepository + "/vendor"
+		vendorfolder, err := os.Stat(vendorPath)
+		if !os.IsNotExist(err) && vendorfolder.Mode().IsDir() {
+			args = append(args, []string{"-e", "FLAG_MOD=vendor"}...)
+			fmt.Printf("Using vendored Go module dependencies\n")
+		}
 	} else {
 		for i := 0; i < len(locals); i++ {
 			args = append(args, []string{"-v", fmt.Sprintf("%s:%s:ro", locals[i], mounts[i])}...)
