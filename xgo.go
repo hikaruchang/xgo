@@ -4,7 +4,7 @@
 // Released under the MIT license.
 
 // Wrapper around the GCO cross compiler docker container.
-package main // import "src.techknowlogick.com/xgo"
+package main // import "src.hikaruchang.com/xgo"
 
 import (
 	"bytes"
@@ -40,8 +40,8 @@ func init() {
 }
 
 // Cross compilation docker containers
-var dockerBase = "techknowlogick/xgo:base"
-var dockerDist = "techknowlogick/xgo:"
+var dockerBase = "hikaruchang/xgo:base"
+var dockerDist = "hikaruchang/xgo:"
 
 // Command line arguments to fine tune the compilation
 var (
@@ -350,13 +350,13 @@ func compile(image string, config *ConfigFlags, flags *BuildFlags, folder string
 
 		fmt.Printf("Enabled Go module support\n")
 
-		// Check whether it has a vendor folder, and if so, use it
-		vendorPath := absRepository + "/vendor"
-		vendorfolder, err := os.Stat(vendorPath)
-		if !os.IsNotExist(err) && vendorfolder.Mode().IsDir() {
-			args = append(args, []string{"-e", "FLAG_MOD=vendor"}...)
-			fmt.Printf("Using vendored Go module dependencies\n")
-		}
+		// // Check whether it has a vendor folder, and if so, use it
+		// vendorPath := absRepository + "/vendor"
+		// vendorfolder, err := os.Stat(vendorPath)
+		// if !os.IsNotExist(err) && vendorfolder.Mode().IsDir() {
+		// 	args = append(args, []string{"-e", "FLAG_MOD=vendor"}...)
+		// 	fmt.Printf("Using vendored Go module dependencies\n")
+		// }
 	} else {
 		for i := 0; i < len(locals); i++ {
 			args = append(args, []string{"-v", fmt.Sprintf("%s:%s:ro", locals[i], mounts[i])}...)

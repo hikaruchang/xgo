@@ -15,13 +15,13 @@
 
 @test "has mod" {
   skip "this test doesn't yet exist"
-  run go run xgo.go src.techknowlogick.com/xgo/tests/hasmod
+  run go run xgo.go src.hikaruchang.com/xgo/tests/hasmod
   [ "$status" -eq 0 ]
 }
 
 @test "has mod and vendor" {
   skip "this test doesn't yet exist"
-  run go run xgo.go src.techknowlogick.com/xgo/tests/hasmodandvendor
+  run go run xgo.go src.hikaruchang.com/xgo/tests/hasmodandvendor
   [ "$status" -eq 0 ]
 }
 

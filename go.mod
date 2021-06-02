@@ -1,3 +1,3 @@
-module src.techknowlogick.com/xgo
+module src.hikaruchang.com/xgo
 
 go 1.12

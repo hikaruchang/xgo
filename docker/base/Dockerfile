@@ -5,7 +5,7 @@
 
 FROM ubuntu:18.04
 
-LABEL maintainer="techknowlogick <techknowlogick@gitea.io>"
+LABEL maintainer="hikaruchang <hikaruchang@gitea.io>"
 
 # Mark the image as xgo enabled to support xgo-in-xgo
 ENV XGO_IN_XGO 1
