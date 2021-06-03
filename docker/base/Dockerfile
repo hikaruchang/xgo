@@ -7,6 +7,8 @@ FROM ubuntu:20.04
 
 LABEL maintainer="hikaruchang <i@rua.moe>"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # Mark the image as xgo enabled to support xgo-in-xgo
 ENV XGO_IN_XGO 1
 
