@@ -36,7 +36,7 @@ RUN \
   gcc-10-powerpc64le-linux-gnu g++-10-powerpc64le-linux-gnu libc6-dev-powerpc-ppc64-cross \
   gcc-10-multilib g++-10-multilib gcc-7-multilib g++-7-multilib gcc-mingw-w64 g++-mingw-w64 \
   clang llvm-dev libtool libxml2-dev uuid-dev libssl-dev swig openjdk-8-jdk pkg-config patch \
-  make xz-utils cpio wget zip unzip p7zip git mercurial bzr texinfo help2man cmake curl mercurial && \
+  make xz-utils cpio wget zip unzip p7zip git mercurial bzr texinfo help2man cmake curl mercurial libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
   find /var/log -type f | while read f; do echo -ne '' > $f; done;
