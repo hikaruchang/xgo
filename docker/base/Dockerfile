@@ -3,11 +3,9 @@
 #
 # Released under the MIT license.
 
-FROM ubuntu:20.04
+FROM ubuntu:18.04
 
-LABEL maintainer="hikaruchang <i@rua.moe>"
-
-ENV DEBIAN_FRONTEND noninteractive
+LABEL maintainer="hikaruchang <hikaruchang@gitea.io>"
 
 # Mark the image as xgo enabled to support xgo-in-xgo
 ENV XGO_IN_XGO 1
@@ -25,18 +23,26 @@ RUN chmod +x $FETCH
 RUN \
   apt-get update && \
   apt-get install -y automake autogen build-essential ca-certificates                    \
-  gcc-10-arm-linux-gnueabi g++-10-arm-linux-gnueabi libc6-dev-armel-cross                \
-  gcc-10-arm-linux-gnueabihf g++-10-arm-linux-gnueabihf libc6-dev-armhf-cross            \
-  gcc-10-aarch64-linux-gnu g++-10-aarch64-linux-gnu libc6-dev-arm64-cross                \
-  gcc-10-mips-linux-gnu g++-10-mips-linux-gnu libc6-dev-mips-cross                       \
-  gcc-10-mipsel-linux-gnu g++-10-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
-  gcc-10-mips64-linux-gnuabi64 g++-10-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
-  gcc-10-mips64el-linux-gnuabi64 g++-10-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
-  gcc-10-s390x-linux-gnu g++-10-s390x-linux-gnu libc6-dev-s390x-cross \
-  gcc-10-powerpc64le-linux-gnu g++-10-powerpc64le-linux-gnu libc6-dev-powerpc-ppc64-cross \
-  gcc-10-multilib g++-10-multilib gcc-7-multilib g++-7-multilib gcc-mingw-w64 g++-mingw-w64 \
+  gcc-5-arm-linux-gnueabi g++-5-arm-linux-gnueabi libc6-dev-armel-cross                \
+  gcc-5-arm-linux-gnueabihf g++-5-arm-linux-gnueabihf libc6-dev-armhf-cross            \
+  gcc-5-aarch64-linux-gnu g++-5-aarch64-linux-gnu libc6-dev-arm64-cross                \
+  gcc-5-mips-linux-gnu g++-5-mips-linux-gnu libc6-dev-mips-cross                       \
+  gcc-5-mipsel-linux-gnu g++-5-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
+  gcc-5-mips64-linux-gnuabi64 g++-5-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
+  gcc-5-mips64el-linux-gnuabi64 g++-5-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
+  gcc-5-multilib g++-5-multilib gcc-mingw-w64 g++-mingw-w64 clang llvm-dev             \
+  gcc-6-arm-linux-gnueabi g++-6-arm-linux-gnueabi libc6-dev-armel-cross                \
+  gcc-6-arm-linux-gnueabihf g++-6-arm-linux-gnueabihf libc6-dev-armhf-cross            \
+  gcc-6-aarch64-linux-gnu g++-6-aarch64-linux-gnu libc6-dev-arm64-cross                \
+  gcc-6-mips-linux-gnu g++-6-mips-linux-gnu libc6-dev-mips-cross                       \
+  gcc-6-mipsel-linux-gnu g++-6-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
+  gcc-6-mips64-linux-gnuabi64 g++-6-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
+  gcc-6-mips64el-linux-gnuabi64 g++-6-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
+  gcc-6-s390x-linux-gnu g++-6-s390x-linux-gnu libc6-dev-s390x-cross \
+  gcc-6-powerpc64le-linux-gnu g++-6-powerpc64le-linux-gnu libc6-dev-powerpc-ppc64-cross \
+  gcc-6-multilib g++-6-multilib gcc-7-multilib g++-7-multilib gcc-mingw-w64 g++-mingw-w64 \
   clang llvm-dev libtool libxml2-dev uuid-dev libssl-dev swig openjdk-8-jdk pkg-config patch \
-  make xz-utils cpio wget zip unzip p7zip git mercurial bzr texinfo help2man cmake curl mercurial libcurl4-nss-dev libsasl2-dev libsasl2-modules maven libapr1-dev libsvn-dev zlib1g-dev && \
+  make xz-utils cpio wget zip unzip p7zip git mercurial bzr texinfo help2man cmake curl mercurial && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
   find /var/log -type f | while read f; do echo -ne '' > $f; done;
@@ -52,8 +58,8 @@ ADD patches /patches
 ##########################
 
 # Configure the container for OSX cross compilation
-ENV OSX_SDK MacOSX11.3.sdk
-ENV OSX_SDK_PATH https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/${OSX_SDK}.tar.xz
+ENV OSX_SDK MacOSX11.1.sdk
+ENV OSX_SDK_PATH https://github.com/larskanis/MacOSX-SDKs/releases/download/11.1/${OSX_SDK}.tar.xz
 
 # Make libxar known to the ld64 and cctools build
 ENV LD_LIBRARY_PATH=/osxcross/target/lib
@@ -61,7 +67,7 @@ ENV LD_LIBRARY_PATH=/osxcross/target/lib
 # Download the osx sdk and build the osx toolchain
 # We download the osx sdk, patch it and pack it again to be able to throw the patched version at osxcross
 RUN \
-  $FETCH $OSX_SDK_PATH cd4f08a75577145b8f05245a2975f7c81401d75e9535dcffbb879ee1deefcbf4 && \
+  $FETCH $OSX_SDK_PATH 97f44b22949cea4522408ccca9a8d87f2d09779b2878423d2d7a2cb805c3d42d && \
   tar -xf `basename $OSX_SDK_PATH` && rm -f `basename $OSX_SDK_PATH`
 ADD patch.tar.xz $OSX_SDK/usr/include/c++
 RUN tar -cf - $OSX_SDK/ | xz -c - > $OSX_SDK.tar.xz && rm -rf $OSX_SDK
@@ -69,7 +75,7 @@ RUN tar -cf - $OSX_SDK/ | xz -c - > $OSX_SDK.tar.xz && rm -rf $OSX_SDK
 # Actually build the toolchain
 RUN \
   git clone https://github.com/tpoechtrager/osxcross.git && \
-  cd osxcross && git checkout 8a716a43a72dab1db9630d7824ee0af3730cb8f9 && cd ../ && \
+  cd osxcross && git checkout 035cc170338b7b252e3f13b0e3ccbf4411bffc41 && cd ../ && \
   mv  $OSX_SDK.tar.xz /osxcross/tarballs/ && \
   OSX_VERSION_MIN=10.10 UNATTENDED=1 LD_LIBRARY_PATH=/osxcross/target/lib /osxcross/build.sh
 
